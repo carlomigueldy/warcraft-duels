@@ -1,12 +1,13 @@
 <template>
     <div>
-        <h3 class="text-center">This is the Duel Component</h3>
+        <h3 class="text-center">World of Warcraft Duels</h3>
         <div class="container">
 
             <div class="card card-body pt-3" v-if="duel">
 
                 <div class="row">
                     <div class="col">
+                        <img :src="characters[playerCharacter].iconUrl" class="float-left" alt="">
                         <div class="text-center">{{ characters[playerCharacter].name }}</div>
                         <div class="progress rounded-0">
                             <div class="progress-bar bg-success" role="progressbar" 
@@ -27,6 +28,7 @@
                     </div>
 
                     <div class="col">
+                        <img :src="characters[enemyCharacter].iconUrl" class="float-right" alt="">
                         <div class="text-center">{{ characters[enemyCharacter].name }}</div>
                         <div class="progress rounded-0">
                             <div class="progress-bar bg-success" role="progressbar" 
@@ -53,16 +55,24 @@
                         <button @click="startGame()">Restart</button>
                         <button @click="endGame()">Forfeit</button>
                         <br>
-                        <button @click="ability(1)">{{ characters[playerCharacter].abilities[0].name }}</button>
-                        <button @click="ability(2)">{{ characters[playerCharacter].abilities[1].name }}</button>
-                        <button @click="ability(3)">{{ characters[playerCharacter].abilities[2].name }}</button>
+                        <button @click="playerAbility(0)">{{ characters[playerCharacter].abilities[0].name }}</button>
+                        <button @click="playerAbility(1)">{{ characters[playerCharacter].abilities[1].name }}</button>
+                        <button @click="playerAbility(2)">{{ characters[playerCharacter].abilities[2].name }}</button>
                     </div>
                 </div>
 
-                <div class="row">
+                <div class="row pt-2">
                     <div class="col">
-                        <h4>Combat Log</h4>
-                        <div class="card card-body" v-if="combatLog" style="height: 100px; overflow-y: scroll">
+                        <h5>Player's Combat Log</h5>
+                        <div class="card card-body" v-if="combatLog" style="height: 200px; overflow-y: scroll">
+                            <div v-for="(log, i) in combatLog" :key="i">
+                                {{ log }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <h5>Enemy's Combat Log</h5>
+                        <div class="card card-body" v-if="combatLog" style="height: 200px; overflow-y: scroll">
                             <div v-for="(log, i) in combatLog" :key="i">
                                 {{ log }}
                             </div>
@@ -97,50 +107,54 @@ export default {
             characters: [
                 {
                     name: 'Warrior',
+                    iconUrl: 'https://wow.zamimg.com/images/wow/icons/large/classicon_warrior.jpg',
                     health: 100, rage: 0, mana: 0,
                     physicalArmor: 100, magicArmor: 0,
-                    minPhysicalDmg: 10, maxPhysicalDmg: 30,
+                    minPhysicalDmg: 5, maxPhysicalDmg: 10,
                     minMagicDmg: 0, maxMagicDmg: 0,
                     abilities: [
-                        { name: 'Heroic Strike', minAbilityDmg: 20, maxAbilityDmg: 45, minHeal: 0, maxHeal: 0, },
-                        { name: 'Whirlwind', minAbilityDmg: 20, maxAbilityDmg: 45, minHeal: 0, maxHeal: 0, },
-                        { name: 'Slam', minAbilityDmg: 20, maxAbilityDmg: 45, minHeal: 0, maxHeal: 0, },
+                        { name: 'Heroic Strike', minAbilityDmg: 20, maxAbilityDmg: 30, minHeal: 0, maxHeal: 0, rageCost: 25, manaCost: 0,  },
+                        { name: 'Whirlwind', minAbilityDmg: 20, maxAbilityDmg: 45, minHeal: 0, maxHeal: 0, rageCost: 35, manaCost: 0, },
+                        { name: 'Slam', minAbilityDmg: 15, maxAbilityDmg: 25, minHeal: 0, maxHeal: 0, rageCost: 15, manaCost: 0, },
                     ]
                 },
                 {
                     name: 'Paladin',
+                    iconUrl: 'https://wow.zamimg.com/images/wow/icons/large/classicon_paladin.jpg',
                     health: 100, rage: 0, mana: 100,
                     physicalArmor: 100, magicArmor: 50,
-                    minPhysicalDmg: 5, maxPhysicalDmg: 20,
-                    minMagicDmg: 3, maxMagicDmg: 15,
+                    minPhysicalDmg: 5, maxPhysicalDmg: 10,
+                    minMagicDmg: 0, maxMagicDmg: 0,
                     abilities: [
-                        { name: 'Crusader Strike', minAbilityDmg: 20, maxAbilityDmg: 45, minHeal: 0, maxHeal: 0, },
-                        { name: 'Judgement', minAbilityDmg: 20, maxAbilityDmg: 45, minHeal: 0, maxHeal: 0, },
-                        { name: 'Flash Of Light', minAbilityDmg: 0, maxAbilityDmg: 0, minHeal: 10, maxHeal: 30, },
+                        { name: 'Crusader Strike', minAbilityDmg: 20, maxAbilityDmg: 25, minHeal: 0, maxHeal: 0, rageCost: 0, manaCost: 25, },
+                        { name: 'Judgement', minAbilityDmg: 25, maxAbilityDmg: 45, minHeal: 0, maxHeal: 0, rageCost: 0, manaCost: 30, },
+                        { name: 'Flash Of Light', minAbilityDmg: 0, maxAbilityDmg: 0, minHeal: 15, maxHeal: 30, rageCost: 0, manaCost: 10, },
                     ]
                 },
                 {
                     name: 'Priest',
+                    iconUrl: 'https://wow.zamimg.com/images/wow/icons/large/classicon_priest.jpg',
                     health: 100, rage: 0, mana: 100,
                     physicalArmor: 0, magicArmor: 100,
-                    minPhysicalDmg: 1, maxPhysicalDmg: 10,
-                    minMagicDmg: 15, maxMagicDmg: 30,
+                    minPhysicalDmg: 1, maxPhysicalDmg: 5,
+                    minMagicDmg: 2, maxMagicDmg: 6,
                     abilities: [
-                        { name: 'Priest Ability #1', minAbilityDmg: 20, maxAbilityDmg: 45, minHeal: 0, maxHeal: 0, },
-                        { name: 'Priest Ability #2', minAbilityDmg: 20, maxAbilityDmg: 45, minHeal: 0, maxHeal: 0, },
-                        { name: 'Priest Ability #3', minAbilityDmg: 0, maxAbilityDmg: 0, minHeal: 10, maxHeal: 30, },
+                        { name: 'Mind Blast', minAbilityDmg: 15, maxAbilityDmg: 25, minHeal: 0, maxHeal: 0, rageCost: 0, manaCost: 15, },
+                        { name: 'Void Bolt', minAbilityDmg: 25, maxAbilityDmg: 35, minHeal: 0, maxHeal: 0, rageCost: 0, manaCost: 40, },
+                        { name: 'Shadow Mend', minAbilityDmg: 0, maxAbilityDmg: 0, minHeal: 15, maxHeal: 30, rageCost: 0, manaCost: 10, },
                     ]
                 },
                 {
                     name: 'Mage',
+                    iconUrl: 'https://wow.zamimg.com/images/wow/icons/large/classicon_mage.jpg',
                     health: 100, rage: 0, mana: 100,
                     physicalArmor: 0, magicArmor: 100,
-                    minPhysicalDmg: 1, maxPhysicalDmg: 10,
-                    minMagicDmg: 15, maxMagicDmg: 30,
+                    minPhysicalDmg: 1, maxPhysicalDmg: 5,
+                    minMagicDmg: 2, maxMagicDmg: 6,
                     abilities: [
-                        { name: 'Fire Ball', minAbilityDmg: 25, maxAbilityDmg: 65, minHeal: 0, maxHeal: 0, },
-                        { name: 'Frost Ball', minAbilityDmg: 25, maxAbilityDmg: 65, minHeal: 0, maxHeal: 0, },
-                        { name: 'Arcane Shot', minAbilityDmg: 10, maxAbilityDmg: 55, minHeal: 0, maxHeal: 0, },
+                        { name: 'Pyro Blast', minAbilityDmg: 20, maxAbilityDmg: 40, minHeal: 0, maxHeal: 0, rageCost: 0, manaCost: 40, },
+                        { name: 'Frost Blast', minAbilityDmg: 15, maxAbilityDmg: 25, minHeal: 0, maxHeal: 0, rageCost: 0, manaCost: 20, },
+                        { name: 'Arcane Shot', minAbilityDmg: 10, maxAbilityDmg: 20, minHeal: 0, maxHeal: 0, rageCost: 0, manaCost: 15, },
                     ]
                 },
             ]
@@ -176,7 +190,9 @@ export default {
                 if (confirm('You have lost! Try again?')) {
                     return this.startGame()
                 }
-            } else if (enemy.health <= 0) {
+            } 
+            
+            if (enemy.health <= 0) {
                 if (confirm('You won! Play again?')) {
                     return this.startGame()
                 }
@@ -189,42 +205,257 @@ export default {
             player.health = 100, player.rage = 0, player.mana = 100
             enemy.health = 100, enemy.rage = 0, enemy.mana = 100
         },
-        ability(index) {
+        playerAbility(index) {
             var player = this.characters[this.playerCharacter]
             var enemy = this.characters[this.enemyCharacter]
-            var damage = ''
+            var damage = '' 
+            var ability = ''
+            var min = ''
+            var max = ''
 
             switch(index) {
-                case 1:
-                    this.checkWin()
-                    damage = this.randomizer(player.abilities[0].minAbilityDmg, player.abilities[0].maxAbilityDmg)
-                    if (player.name == 'Warrior' && player.rage > 30) {
+                case 0:
+                    min = player.abilities[index].minAbilityDmg
+                    max = player.abilities[index].maxAbilityDmg
+                    ability = player.abilities[index]
+                    damage = this.randomizer(min, max)
+
+                    if (player.name == 'Warrior' && player.rage >= ability.rageCost) {
                         enemy.health -= damage
-                        player.rage -= 30
-                        this.combatLog.unshift(`${player.name} lands ${player.abilities[0].name} on ${enemy.name} with ${damage} damage`)
-                    } else if (player.name == 'Warrior') {
-                        this.combatLog.unshift(`${player.name} needs more rage`)
+                        player.rage -= ability.rageCost
+                        this.combatLog.unshift(`${player.name} lands ${ability.name} on ${enemy.name} with ${damage} damage`)
                         this.enemyAttacks()
-                    } else if (player.name == 'Paladin' && player.mana > 30) {
+                    } else if (player.name == 'Warrior') {
+                        this.combatLog.unshift(`${player.name} needs more rage. Rage required for ${ability.name} is ${ability.rageCost}`)
+                        this.enemyAttacks()
+                    } else if (player.name == 'Paladin' && player.mana >= ability.manaCost) {
                         enemy.health -= damage
-                        player.mana -= 30
-                        this.combatLog.unshift(`${player.name} lands ${player.abilities[0].name} on ${enemy.name} with ${damage} damage`)
+                        player.mana -= ability.manaCost
+                        this.combatLog.unshift(`${player.name} lands ${ability.name} on ${enemy.name} with ${damage} damage`)
+                        this.enemyAttacks()
+                    } else if (player.name == 'Paladin') {
+                        this.combatLog.unshift(`${player.name} needs more mana. Mana required for ${ability.name} is ${ability.manaCost}`)
+                        this.enemyAttacks()
+                    } else if (player.name == 'Priest' && player.mana >= ability.manaCost) {
+                        enemy.health -= damage
+                        player.mana -= ability.manaCost
+                        this.combatLog.unshift(`${player.name} lands ${ability.name} on ${enemy.name} with ${damage} damage`)
+                        this.enemyAttacks()
+                    } else if (player.name == 'Priest') {
+                        this.combatLog.unshift(`${player.name} needs more mana. Mana required for ${ability.name} is ${ability.manaCost}`)
+                        this.enemyAttacks()
+                    } else if (player.name == 'Mage' && player.mana >= ability.manaCost) {
+                        enemy.health -= damage
+                        player.mana -= ability.manaCost
+                        this.combatLog.unshift(`${player.name} lands ${ability.name} on ${enemy.name} with ${damage} damage`)
+                        this.enemyAttacks()
+                    } else if (player.name == 'Mage') {
+                        this.combatLog.unshift(`${player.name} needs more mana. Mana required for ${ability.name} is ${ability.manaCost}`)
+                        this.enemyAttacks()
                     }
-                    break
-                case 2: 
+
                     this.checkWin()
-                    damage = this.randomizer(player.abilities[1].minAbilityDmg, player.abilities[1].maxAbilityDmg)
-                    enemy.health -= damage
-                    this.combatLog.unshift(`${player.name} lands ${player.abilities[1].name} on ${enemy.name}`)
                     break
-                case 3:
+                case 1: 
+                    min = player.abilities[index].minAbilityDmg
+                    max = player.abilities[index].maxAbilityDmg
+                    ability = player.abilities[index]
+                    damage = this.randomizer(min, max)
+
+                    if (player.name == 'Warrior' && player.rage >= ability.rageCost) {
+                        enemy.health -= damage
+                        player.rage -= ability.rageCost
+                        this.combatLog.unshift(`${player.name} lands ${ability.name} on ${enemy.name} with ${damage} damage`)
+                        this.enemyAttacks()
+                    } else if (player.name == 'Warrior') {
+                        this.combatLog.unshift(`${player.name} needs more rage. Rage required for ${ability.name} is ${ability.rageCost}`)
+                        this.enemyAttacks()
+                    } else if (player.name == 'Paladin' && player.mana >= ability.manaCost) {
+                        enemy.health -= damage
+                        player.mana -= ability.manaCost
+                        this.combatLog.unshift(`${player.name} lands ${ability.name} on ${enemy.name} with ${damage} damage`)
+                        this.enemyAttacks()
+                    } else if (player.name == 'Paladin') {
+                        this.combatLog.unshift(`${player.name} needs more mana. Mana required for ${ability.name} is ${ability.manaCost}`)
+                        this.enemyAttacks()
+                    } else if (player.name == 'Priest' && player.mana >= ability.manaCost) {
+                        enemy.health -= damage
+                        player.mana -= ability.manaCost
+                        this.combatLog.unshift(`${player.name} lands ${ability.name} on ${enemy.name} with ${damage} damage`)
+                        this.enemyAttacks()
+                    } else if (player.name == 'Priest') {
+                        this.combatLog.unshift(`${player.name} needs more mana. Mana required for ${ability.name} is ${ability.manaCost}`)
+                        this.enemyAttacks()
+                    } else if (player.name == 'Mage' && player.mana >= ability.manaCost) {
+                        enemy.health -= damage
+                        player.mana -= ability.manaCost
+                        this.combatLog.unshift(`${player.name} lands ${ability.name} on ${enemy.name} with ${damage} damage`)
+                        this.enemyAttacks()
+                    } else if (player.name == 'Mage') {
+                        this.combatLog.unshift(`${player.name} needs more mana. Mana required for ${ability.name} is ${ability.manaCost}`)
+                        this.enemyAttacks()
+                    }
+
                     this.checkWin()
-                    damage = this.randomizer(player.abilities[2].minAbilityDmg, player.abilities[2].maxAbilityDmg)
-                    enemy.health -= damage
-                    this.combatLog.unshift(`${player.name} lands ${player.abilities[2].name} on ${enemy.name}`)
+                    break
+                case 2:
+                    min = player.abilities[index].minAbilityDmg
+                    max = player.abilities[index].maxAbilityDmg
+                    ability = player.abilities[index]
+                    damage = this.randomizer(min, max)
+
+                    if (player.name == 'Warrior' && player.rage >= ability.rageCost) {
+                        enemy.health -= damage
+                        player.rage -= ability.rageCost
+                        this.combatLog.unshift(`${player.name} lands ${ability.name} on ${enemy.name} with ${damage} damage`)
+                        this.enemyAttacks()
+                    } else if (player.name == 'Warrior') {
+                        this.combatLog.unshift(`${player.name} needs more rage. Rage required for ${ability.name} is ${ability.rageCost}`)
+                        this.enemyAttacks()
+                    } else if (player.name == 'Paladin' && player.mana >= ability.manaCost) {
+                        enemy.health -= damage
+                        player.mana -= ability.manaCost
+                        this.combatLog.unshift(`${player.name} lands ${ability.name} on ${enemy.name} with ${damage} damage`)
+                        this.enemyAttacks()
+                    } else if (player.name == 'Paladin') {
+                        this.combatLog.unshift(`${player.name} needs more mana. Mana required for ${ability.name} is ${ability.manaCost}`)
+                        this.enemyAttacks()
+                    } else if (player.name == 'Priest' && player.mana >= ability.manaCost) {
+                        enemy.health -= damage
+                        player.mana -= ability.manaCost
+                        this.combatLog.unshift(`${player.name} lands ${ability.name} on ${enemy.name} with ${damage} damage`)
+                        this.enemyAttacks()
+                    } else if (player.name == 'Priest') {
+                        this.combatLog.unshift(`${player.name} needs more mana. Mana required for ${ability.name} is ${ability.manaCost}`)
+                        this.enemyAttacks()
+                    } else if (player.name == 'Mage' && player.mana >= ability.manaCost) {
+                        enemy.health -= damage
+                        player.mana -= ability.manaCost
+                        this.combatLog.unshift(`${player.name} lands ${ability.name} on ${enemy.name} with ${damage} damage`)
+                        this.enemyAttacks()
+                    } else if (player.name == 'Mage') {
+                        this.combatLog.unshift(`${player.name} needs more mana. Mana required for ${ability.name} is ${ability.manaCost}`)
+                        this.enemyAttacks()
+                    }
+
+                    this.checkWin()
                     break
                 default:
+                    return
+            }
+        },
+        enemyAbility(index) {
+            var player = this.characters[this.playerCharacter]
+            var enemy = this.characters[this.enemyCharacter]
+            var damage = '' 
+            var ability = ''
+            var min = ''
+            var max = ''
+
+            switch(index) {
+                case 0:
+                    min = enemy.abilities[index].minAbilityDmg
+                    max = enemy.abilities[index].maxAbilityDmg
+                    ability = enemy.abilities[index]
+                    damage = this.randomizer(min, max)
+
+                    if (enemy.name == 'Warrior' && enemy.rage >= ability.rageCost) {
+                        player.health -= damage
+                        enemy.rage -= ability.rageCost
+                        this.combatLog.unshift(`${enemy.name} lands ${ability.name} on ${player.name} with ${damage} damage`)
+                    } else if (enemy.name == 'Warrior') {
+                        this.combatLog.unshift(`${enemy.name} needs more rage. Rage required for ${ability.name} is ${ability.rageCost}`)
+                    } else if (enemy.name == 'Paladin' && enemy.mana >= ability.manaCost) {
+                        player.health -= damage
+                        enemy.mana -= ability.manaCost
+                        this.combatLog.unshift(`${enemy.name} lands ${ability.name} on ${player.name} with ${damage} damage`)
+                    } else if (enemy.name == 'Paladin') {
+                        this.combatLog.unshift(`${enemy.name} needs more mana. Mana required for ${ability.name} is ${ability.manaCost}`)
+                    } else if (enemy.name == 'Priest' && enemy.mana >= ability.manaCost) {
+                        player.health -= damage
+                        enemy.mana -= ability.manaCost
+                        this.combatLog.unshift(`${enemy.name} lands ${ability.name} on ${player.name} with ${damage} damage`)
+                    } else if (enemy.name == 'Priest') {
+                        this.combatLog.unshift(`${enemy.name} needs more mana. Mana required for ${ability.name} is ${ability.manaCost}`)
+                    } else if (enemy.name == 'Mage' && enemy.mana >= ability.manaCost) {
+                        player.health -= damage
+                        enemy.mana -= ability.manaCost
+                        this.combatLog.unshift(`${enemy.name} lands ${ability.name} on ${player.name} with ${damage} damage`)
+                    } else if (enemy.name == 'Mage') {
+                        this.combatLog.unshift(`${enemy.name} needs more mana. Mana required for ${ability.name} is ${ability.manaCost}`)
+                    }
+
                     this.checkWin()
+                    break
+                case 1: 
+                    min = enemy.abilities[index].minAbilityDmg
+                    max = enemy.abilities[index].maxAbilityDmg
+                    ability = enemy.abilities[index]
+                    damage = this.randomizer(min, max)
+
+                    if (enemy.name == 'Warrior' && enemy.rage >= ability.rageCost) {
+                        player.health -= damage
+                        enemy.rage -= ability.rageCost
+                        this.combatLog.unshift(`${enemy.name} lands ${ability.name} on ${player.name} with ${damage} damage`)
+                    } else if (enemy.name == 'Warrior') {
+                        this.combatLog.unshift(`${enemy.name} needs more rage. Rage required for ${ability.name} is ${ability.rageCost}`)
+                    } else if (enemy.name == 'Paladin' && enemy.mana >= ability.manaCost) {
+                        player.health -= damage
+                        enemy.mana -= ability.manaCost
+                        this.combatLog.unshift(`${enemy.name} lands ${ability.name} on ${player.name} with ${damage} damage`)
+                    } else if (enemy.name == 'Paladin') {
+                        this.combatLog.unshift(`${enemy.name} needs more mana. Mana required for ${ability.name} is ${ability.manaCost}`)
+                    } else if (enemy.name == 'Priest' && enemy.mana >= ability.manaCost) {
+                        player.health -= damage
+                        enemy.mana -= ability.manaCost
+                        this.combatLog.unshift(`${enemy.name} lands ${ability.name} on ${player.name} with ${damage} damage`)
+                    } else if (enemy.name == 'Priest') {
+                        this.combatLog.unshift(`${enemy.name} needs more mana. Mana required for ${ability.name} is ${ability.manaCost}`)
+                    } else if (enemy.name == 'Mage' && enemy.mana >= ability.manaCost) {
+                        player.health -= damage
+                        enemy.mana -= ability.manaCost
+                        this.combatLog.unshift(`${enemy.name} lands ${ability.name} on ${player.name} with ${damage} damage`)
+                    } else if (enemy.name == 'Mage') {
+                        this.combatLog.unshift(`${enemy.name} needs more mana. Mana required for ${ability.name} is ${ability.manaCost}`)
+                    }
+
+                    this.checkWin()
+                    break
+                case 2:
+                    min = enemy.abilities[index].minAbilityDmg
+                    max = enemy.abilities[index].maxAbilityDmg
+                    ability = enemy.abilities[index]
+                    damage = this.randomizer(min, max)
+
+                    if (enemy.name == 'Warrior' && enemy.rage >= ability.rageCost) {
+                        player.health -= damage
+                        enemy.rage -= ability.rageCost
+                        this.combatLog.unshift(`${enemy.name} lands ${ability.name} on ${player.name} with ${damage} damage`)
+                    } else if (enemy.name == 'Warrior') {
+                        this.combatLog.unshift(`${enemy.name} needs more rage. Rage required for ${ability.name} is ${ability.rageCost}`)
+                    } else if (enemy.name == 'Paladin' && enemy.mana >= ability.manaCost) {
+                        player.health -= damage
+                        enemy.mana -= ability.manaCost
+                        this.combatLog.unshift(`${enemy.name} lands ${ability.name} on ${player.name} with ${damage} damage`)
+                    } else if (enemy.name == 'Paladin') {
+                        this.combatLog.unshift(`${enemy.name} needs more mana. Mana required for ${ability.name} is ${ability.manaCost}`)
+                    } else if (enemy.name == 'Priest' && enemy.mana >= ability.manaCost) {
+                        player.health -= damage
+                        enemy.mana -= ability.manaCost
+                        this.combatLog.unshift(`${enemy.name} lands ${ability.name} on ${player.name} with ${damage} damage`)
+                    } else if (enemy.name == 'Priest') {
+                        this.combatLog.unshift(`${enemy.name} needs more mana. Mana required for ${ability.name} is ${ability.manaCost}`)
+                    } else if (enemy.name == 'Mage' && enemy.mana >= ability.manaCost) {
+                        player.health -= damage
+                        enemy.mana -= ability.manaCost
+                        this.combatLog.unshift(`${enemy.name} lands ${ability.name} on ${player.name} with ${damage} damage`)
+                    } else if (enemy.name == 'Mage') {
+                        this.combatLog.unshift(`${enemy.name} needs more mana. Mana required for ${ability.name} is ${ability.manaCost}`)
+                    }
+
+                    this.checkWin()
+                    break
+                default:
                     return
             }
         },
@@ -260,6 +491,7 @@ export default {
             var enemy = this.characters[this.enemyCharacter]
             var enemyPhysicalDmg = this.randomizer(enemy.minPhysicalDmg, enemy.maxPhysicalDmg)
             var enemyMagicDmg = this.randomizer(enemy.minMagicDmg, enemy.maxMagicDmg)
+            var chance = Math.random()
             
             if (enemy.name == 'Warrior') {
                 this.combatLog.unshift(`The ${enemy.name} hits ${player.name} with ${enemyPhysicalDmg} of physical damage`)
@@ -275,6 +507,20 @@ export default {
                 this.combatLog.unshift(`The ${enemy.name} hits ${player.name} with ${enemyMagicDmg} of magical damage`)
                 player.health -= enemyMagicDmg
             }
+
+            if (chance >= 0.75) {
+                // Ability 1
+                this.enemyAbility(0)
+            } else if (chance >= 0.55) {
+                // Ability 2
+                this.enemyAbility(1)
+            } else if (chance >= 0.35) {
+                // Ability 3
+                this.enemyAbility(2)
+            } else {
+                return
+            }
+
             return
         }
     }
